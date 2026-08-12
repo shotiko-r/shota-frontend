@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Universalcom — სწრაფი გადახდის აპარატების კომპანია">
+  <title>Universalcom — შესვლა</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Georgian:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark">
+  <div class="watermark" aria-hidden="true">
+    <span class="watermark__line">Universalcom</span>
+    <span class="watermark__line watermark__line--secondary">სწრაფი გადახდის აპარატების კომპანია</span>
+    <span class="watermark__accent"></span>
+  </div>
+
+  <div class="page">
+    <header class="site-header">
+      <a class="site-header__brand" href="index.html" aria-label="Universalcom მთავარი გვერდი">
+        <span class="site-header__logo" aria-hidden="true">UC</span>
+        <span>Universalcom</span>
+      </a>
+      <nav class="nav" aria-label="მთავარი ნავიგაცია">
+        <button type="button" class="nav__toggle" aria-expanded="false" aria-controls="primary-nav" aria-label="მენიუს გახსნა">
+          <span class="nav__toggle-bar"></span>
+          <span class="nav__toggle-bar"></span>
+          <span class="nav__toggle-bar"></span>
+        </button>
+        <ul id="primary-nav" class="nav__links">
+          <li><a class="nav__link" href="#hero">მთავარი</a></li>
+          <li><a class="nav__link" href="#login">შესვლა</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main id="hero" class="hero">
+      <div class="hero__copy">
+        <span class="hero__eyebrow">სწრაფი გადახდის აპარატები</span>
+        <h1 class="hero__title">
+          <span class="hero__title-accent">Universalcom</span> — სანდო პარტნიორი თქვენი ბიზნესისთვის
+        </h1>
+        <p class="hero__lead">
+          თანამედროვე გადახდის გადაწყვეტები და პროფესიონალური მხარდაჭერა ერთ სივრცეში.
+        </p>
+        <div class="hero__cta-row">
+          <a class="btn btn--primary" href="#login">სისტემაში შესვლა</a>
+          <a class="btn btn--ghost" href="mailto:info@universalcom.ge">დაგვიკავშირდით</a>
+        </div>
+      </div>
+
+      <section id="login" class="hero__card" aria-labelledby="login-heading">
+        <h2 id="login-heading" class="hero__card-title">შესვლა</h2>
+        <form class="login-form" onsubmit="event.preventDefault(); login();">
+          <div class="form-group">
+            <label class="visually-hidden" for="username">მომხმარებელი</label>
+            <input class="input" id="username" name="username" autocomplete="username" placeholder="მომხმარებელი" required>
+          </div>
+          <div class="form-group">
+            <label class="visually-hidden" for="password">პაროლი</label>
+            <input class="input" id="password" name="password" type="password" autocomplete="current-password" placeholder="პაროლი" required>
+          </div>
+          <button class="btn btn--primary btn--block" type="submit">შესვლა</button>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

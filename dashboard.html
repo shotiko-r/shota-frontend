@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Universalcom — დაშბორდი">
+  <title>Universalcom — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Georgian:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark">
+  <div class="watermark" aria-hidden="true">
+    <span class="watermark__line">Universalcom</span>
+    <span class="watermark__line watermark__line--secondary">სწრაფი გადახდის აპარატების კომპანია</span>
+    <span class="watermark__accent"></span>
+  </div>
+
+  <div class="page">
+    <header class="site-header site-header--dashboard">
+      <button type="button" class="nav__toggle sidebar-toggle" aria-expanded="false" aria-controls="app-sidebar" aria-label="საიდბარის გახსნა">
+        <span class="nav__toggle-bar"></span>
+        <span class="nav__toggle-bar"></span>
+        <span class="nav__toggle-bar"></span>
+      </button>
+      <a class="site-header__brand" href="dashboard.html" aria-label="Universalcom დაშბორდი">
+        <span class="site-header__logo" aria-hidden="true">UC</span>
+        <span>Universalcom</span>
+      </a>
+      <nav class="nav nav__actions" aria-label="ანგარიში">
+        <button type="button" class="nav__toggle" id="dash-nav-toggle" aria-expanded="false" aria-controls="dash-nav-links" aria-label="მენიუს გახსნა">
+          <span class="nav__toggle-bar"></span>
+          <span class="nav__toggle-bar"></span>
+          <span class="nav__toggle-bar"></span>
+        </button>
+        <ul id="dash-nav-links" class="nav__links">
+          <li><button type="button" class="nav__link nav__link--btn" onclick="logout()">გასვლა</button></li>
+        </ul>
+      </nav>
+    </header>
+
+    <div id="sidebar-backdrop" class="sidebar-backdrop" aria-hidden="true"></div>
+
+    <div class="app-shell">
+      <aside id="app-sidebar" class="sidebar" aria-label="დაშბორდის მენიუ">
+        <p class="sidebar__title">მენიუ</p>
+        <button type="button" class="btn btn--primary" onclick="loadTasks()">დავალებები</button>
+        <button type="button" class="btn btn--ghost" onclick="exportExcel()">Excel ექსპორტი</button>
+      </aside>
+
+      <main class="content">
+        <h1>Dashboard</h1>
+
+        <section id="createBox" class="panel" aria-labelledby="create-heading">
+          <h2 id="create-heading">დავალების შექმნა</h2>
+          <div class="form-group">
+            <label class="visually-hidden" for="title">სათაური</label>
+            <input class="input" id="title" placeholder="სათაური">
+          </div>
+          <div class="form-group">
+            <label class="visually-hidden" for="address">მისამართი</label>
+            <input class="input" id="address" placeholder="მისამართი">
+          </div>
+          <div class="form-group">
+            <label class="visually-hidden" for="phone">ტელეფონი</label>
+            <input class="input" id="phone" placeholder="ტელეფონი">
+          </div>
+          <div class="form-group">
+            <label class="visually-hidden" for="assignedTo">ტექნიკოსი</label>
+            <input class="input" id="assignedTo" placeholder="ტექნიკოსი">
+          </div>
+          <div class="form-group">
+            <label class="visually-hidden" for="image">სურათი</label>
+            <input class="input" type="file" id="image" accept="image/*">
+          </div>
+          <button type="button" class="btn btn--primary" onclick="createTask()">დამატება</button>
+        </section>
+
+        <section id="tasks" aria-label="დავალებების სია"></section>
+      </main>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
