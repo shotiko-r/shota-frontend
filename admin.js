@@ -12,7 +12,7 @@ const PRIORITY_LABELS = {
   low: "დაბალი"
 };
 
-const state = { tasks: [], users: [], dashboard: null, editingId: null };
+const state = { tasks: [], users: [], dashboard: null, editingId: null, isSubmitting: false };
 
 function getToken() {
   return localStorage.getItem("token");
