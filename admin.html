@@ -30,6 +30,10 @@
           <span class="workspace-user__avatar" aria-hidden="true">A</span>
           <span class="workspace-user__copy"><strong>ადმინისტრატორი</strong><small>Operations</small></span>
         </button>
+        <button type="button" class="theme-toggle" id="themeToggle" aria-label="témaცვლა" role="switch" data-theme="light">
+          <span aria-hidden="true">☀️</span>
+          <span aria-hidden="true">🌙</span>
+        </button>
       </div>
     </header>
 
@@ -237,5 +241,38 @@
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <script src="admin.js"></script>
+  <script>
+    // Theme toggle
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      // Set initial theme
+      if (savedTheme) {
+        document.body.dataset.theme = savedTheme;
+      } else if (prefersDark) {
+        document.body.dataset.theme = 'dark';
+      }
+      
+      // Update toggle icon
+      function updateIcon() {
+        const isDark = document.body.dataset.theme === 'dark';
+        themeToggle.querySelector('span:first-child').style.display = isDark ? 'none' : 'inline';
+        themeToggle.querySelector('span:last-child').style.display = isDark ? 'inline' : 'none';
+      }
+      
+      updateIcon();
+      
+      // Toggle theme
+      themeToggle.addEventListener('click', () => {
+        const currentTheme = document.body.dataset.theme;
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.body.dataset.theme = newTheme;
+        localStorage.setItem('theme', newTheme);
+        updateIcon();
+      });
+    }
+  </script>
 </body>
 </html>
