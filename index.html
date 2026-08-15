@@ -11,7 +11,6 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="dark">
-<!-- OpenCode edit test -->
   <div class="watermark" aria-hidden="true">
     <span class="watermark__line">Universalcom</span>
     <span class="watermark__line watermark__line--secondary">სწრაფი გადახდის აპარატების კომპანია</span>
@@ -70,17 +69,5 @@
   </div>
 
   <script src="app.js"></script>
-  <script>
-    // Theme toggle
-    const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
-    // Set initial theme
-    if (savedTheme) {
-      document.body.dataset.theme = savedTheme;
-    } else if (prefersDark) {
-      document.body.dataset.theme = 'dark';
-    }
-  </script>
 </body>
 </html>

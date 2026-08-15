@@ -34,7 +34,6 @@
           <span class="nav__toggle-bar"></span>
           <span class="nav__toggle-bar"></span>
         </button>
-        <button type="button" class="theme-toggle" id="dashThemeToggle" aria-label="témaცვლა" role="switch" data-theme="light"><span aria-hidden="true">☀️</span><span aria-hidden="true">🌙</span></button>
         <ul id="dash-nav-links" class="nav__links">
           <li><button type="button" class="nav__link nav__link--btn" onclick="logout()">გასვლა</button></li>
         </ul>
@@ -84,38 +83,5 @@
   </div>
 
   <script src="app.js"></script>
-  <script>
-    // Theme toggle
-    const dashThemeToggle = document.getElementById('dashThemeToggle');
-    if (dashThemeToggle) {
-      const savedTheme = localStorage.getItem('theme');
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      
-      // Set initial theme
-      if (savedTheme) {
-        document.body.dataset.theme = savedTheme;
-      } else if (prefersDark) {
-        document.body.dataset.theme = 'dark';
-      }
-      
-      // Update toggle icon
-      function updateIcon() {
-        const isDark = document.body.dataset.theme === 'dark';
-        dashThemeToggle.querySelector('span:first-child').style.display = isDark ? 'none' : 'inline';
-        dashThemeToggle.querySelector('span:last-child').style.display = isDark ? 'inline' : 'none';
-      }
-      
-      updateIcon();
-      
-      // Toggle theme
-      dashThemeToggle.addEventListener('click', () => {
-        const currentTheme = document.body.dataset.theme;
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        document.body.dataset.theme = newTheme;
-        localStorage.setItem('theme', newTheme);
-        updateIcon();
-      });
-    }
-  </script>
 </body>
 </html>
