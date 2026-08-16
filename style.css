@@ -1033,7 +1033,7 @@ input[type="file"].input::file-selector-button:hover {
   --workspace-text: #15191d;
 }
 
-[data-theme="dark"] .operations-page {
+body.operations-page[data-theme="dark"] {
   --workspace-border: rgba(255, 255, 255, 0.08);
   --workspace-soft: #1e242b;
   --workspace-muted: #a8acd1;
@@ -1260,7 +1260,7 @@ input[type="file"].input::file-selector-button:hover {
 
 .workload-row:last-child { border-bottom: 0; }
 .workload-row__avatar { width: 1.8rem; height: 1.8rem; font-size: 0.68rem; }
-.workload-row__name { font-size: 0.86rem; font-weight: 600; }
+.workload-row__name { font-size: 0.86rem; font-weight: 600; color: var(--text-primary); }
 .workload-row__count { color: var(--workspace-muted); font-size: 0.75rem; }
 
 .upcoming-row {
@@ -1280,7 +1280,7 @@ input[type="file"].input::file-selector-button:hover {
 .upcoming-row:hover strong { text-decoration: underline; }
 .upcoming-row__date { color: var(--workspace-muted); font-size: 0.75rem; font-weight: 700; }
 .upcoming-row strong, .upcoming-row small { display: block; }
-.upcoming-row strong { font-size: 0.84rem; }
+.upcoming-row strong { font-size: 0.84rem; color: var(--text-primary); }
 .upcoming-row small { margin-top: 0.12rem; color: var(--workspace-muted); font-size: 0.72rem; }
 
 .empty-state,
@@ -1328,7 +1328,16 @@ input[type="file"].input::file-selector-button:hover {
 }
 
 .search-field span { color: var(--workspace-muted); font-size: 1.1rem; }
-.search-field input { width: 100%; padding: 0.72rem 0; border: 0; outline: 0; font: inherit; font-size: 0.86rem; }
+.search-field input {
+  width: 100%;
+  padding: 0.72rem 0;
+  border: 0;
+  outline: 0;
+  font: inherit;
+  font-size: 0.86rem;
+  color: var(--text-primary);
+  background: transparent;
+}
 .board-toolbar__select { width: auto; min-width: 10rem; padding: 0.72rem 2.1rem 0.72rem 0.8rem; font-size: 0.86rem; }
 
 .kanban-board {
