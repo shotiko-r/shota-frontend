@@ -34,6 +34,10 @@
           <li><a class="nav__link" href="#login">შესვლა</a></li>
         </ul>
       </nav>
+      <button type="button" class="theme-toggle" id="themeToggle" aria-label="témaცვლა" role="switch" data-theme="light">
+        <span aria-hidden="true">☀️</span>
+        <span aria-hidden="true">🌙</span>
+      </button>
     </header>
 
     <main id="hero" class="hero">
@@ -69,5 +73,35 @@
   </div>
 
   <script src="app.js"></script>
+  <script>
+    // Theme toggle
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    // Set initial theme
+    if (savedTheme) {
+      document.body.dataset.theme = savedTheme;
+    } else if (prefersDark) {
+      document.body.dataset.theme = 'dark';
+    }
+    
+    // Update icon display
+    const themeToggle = document.getElementById('themeToggle');
+    function updateIcon() {
+      const isDark = document.body.dataset.theme === 'dark';
+      themeToggle.querySelector('span:first-child').style.display = isDark ? 'none' : 'inline';
+      themeToggle.querySelector('span:last-child').style.display = isDark ? 'inline' : 'none';
+    }
+    updateIcon();
+    
+    // Toggle theme
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = document.body.dataset.theme;
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.body.dataset.theme = newTheme;
+      localStorage.setItem('theme', newTheme);
+      updateIcon();
+    });
+  </script>
 </body>
 </html>
