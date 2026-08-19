@@ -3,162 +3,242 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Unitasks — სამუშაო ოპერაციების მართვის სივრცე">
-  <title>Unitasks — ოპერაციების მართვა</title>
+  <meta name="description" content="Unitasks — უნივერსალური დავალებების მენეჯერი">
+  <title>Unitasks — სამუშაო სივრცე</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Georgian:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <script src="js/theme.js"></script>
 </head>
 <body class="operations-page">
   <div class="watermark" aria-hidden="true">
     <span class="watermark__line">Unitasks</span>
-    <span class="watermark__line watermark__line--secondary">Operations workspace</span>
+    <span class="watermark__line watermark__line--secondary">სამუშაო სივრცე</span>
     <span class="watermark__accent"></span>
   </div>
 
   <div class="page">
     <header class="site-header workspace-header">
-      <a class="site-header__brand" href="admin.html" aria-label="Unitasks ოპერაციების მართვა">
-        <span class="site-header__logo" aria-hidden="true">UC</span>
+      <button type="button" class="nav__toggle sidebar-toggle" id="sidebarToggle" aria-expanded="false" aria-controls="workspaceSidebar" aria-label="საიდბარის გახსნა">
+        <span class="nav__toggle-bar"></span>
+        <span class="nav__toggle-bar"></span>
+        <span class="nav__toggle-bar"></span>
+      </button>
+
+      <a class="site-header__brand" href="admin.html" aria-label="Unitasks სამუშაო სივრცე">
+        <span class="site-header__logo" aria-hidden="true">UT</span>
         <span>Unitasks</span>
       </a>
 
       <div class="workspace-header__actions">
         <span class="workspace-header__date" id="todayLabel"></span>
-        <button type="button" class="workspace-user" id="logoutButton" title="სისტემიდან გასვლა">
-          <span class="workspace-user__avatar" aria-hidden="true">A</span>
-          <span class="workspace-user__copy"><strong>ადმინისტრატორი</strong><small>Operations</small></span>
+        <button type="button" class="workspace-user" id="userChip" title="პროფილი">
+          <span class="workspace-user__avatar" id="userAvatar" aria-hidden="true">?</span>
+          <span class="workspace-user__copy">
+            <strong id="userName">—</strong>
+            <small id="userRole">—</small>
+          </span>
         </button>
-        <button type="button" class="theme-toggle" id="themeToggle" aria-label="témaცვლა" role="switch" data-theme="light">
+        <button type="button" class="theme-toggle" id="themeToggle" aria-label="თემის ცვლა" role="switch">
           <span aria-hidden="true">☀️</span>
           <span aria-hidden="true">🌙</span>
         </button>
+        <button type="button" class="btn btn--ghost btn--compact workspace-logout" id="logoutButton">გასვლა</button>
       </div>
     </header>
 
-    <div class="workspace-shell">
-      <aside class="workspace-sidebar" aria-label="ძირითადი მენიუ">
+    <div id="sidebarBackdrop" class="sidebar-backdrop" aria-hidden="true"></div>
+
+    <div class="workspace-shell" id="workspaceShell">
+      <aside class="workspace-sidebar" id="workspaceSidebar" aria-label="ძირითადი მენიუ">
         <div class="workspace-sidebar__label">სამუშაო სივრცე</div>
-        <nav class="workspace-nav" aria-label="ოპერაციების ნავიგაცია">
-          <button type="button" class="workspace-nav__item is-active" data-scroll-to="overview">
-            <span aria-hidden="true">◫</span> მიმოხილვა
-          </button>
-          <button type="button" class="workspace-nav__item" data-scroll-to="board">
-            <span aria-hidden="true">▦</span> დავალებების დაფა
-          </button>
-          <button type="button" class="workspace-nav__item" data-scroll-to="team">
-            <span aria-hidden="true">◎</span> გუნდის დატვირთვა
-          </button>
-        </nav>
+        <nav class="workspace-nav" id="workspaceNav" aria-label="ნავიგაცია"></nav>
 
         <div class="workspace-sidebar__help">
           <span class="workspace-sidebar__help-icon" aria-hidden="true">?</span>
-          <p><strong>გჭირდება სწრაფი რეაგირება?</strong> მონიშნე დავალება როგორც „დაბლოკილი“, რომ გუნდმა ის პირველ რიგში დაინახოს.</p>
+          <p><strong>გჭირდება სწრაფი რეაგირება?</strong> მონიშნე დავალება, რომელიც გუნდის ყურადღებას მოითხოვს.</p>
         </div>
       </aside>
 
       <main class="workspace-main">
-        <section id="overview" class="workspace-hero" aria-labelledby="workspace-heading">
-          <div>
-            <span class="workspace-kicker">Operations control center</span>
-            <h1 id="workspace-heading">დღის სამუშაოები <span>კონტროლქვეშაა.</span></h1>
-            <p>შეაფასე გუნდის დატვირთვა, გაანაწილე პრიორიტეტები და მიჰყევი ყველა დავალებას მიღებიდან დასრულებამდე.</p>
-          </div>
-          <button type="button" class="btn btn--primary workspace-hero__cta" id="createTaskButton">
-            <span aria-hidden="true">+</span> ახალი დავალება
-          </button>
-        </section>
 
-        <section class="metrics-grid" aria-label="მიმოხილვის მაჩვენებლები">
-          <article class="metric-card metric-card--yellow">
-            <span class="metric-card__label">აქტიური დავალებები</span>
-            <strong id="metricActive">—</strong>
-            <span class="metric-card__note">გადასანაწილებელი და მიმდინარე</span>
-          </article>
-          <article class="metric-card">
-            <span class="metric-card__label">მიმდინარეობს</span>
-            <strong id="metricProgress">—</strong>
-            <span class="metric-card__note">ტექნიკოსებთან სამუშაოზე</span>
-          </article>
-          <article class="metric-card metric-card--alert">
-            <span class="metric-card__label">დაბლოკილია</span>
-            <strong id="metricBlocked">—</strong>
-            <span class="metric-card__note">მოითხოვს ყურადღებას</span>
-          </article>
-          <article class="metric-card">
-            <span class="metric-card__label">ვადაგადაცილებული</span>
-            <strong id="metricOverdue">—</strong>
-            <span class="metric-card__note">ვადა უკვე გასულია</span>
-          </article>
-        </section>
-
-        <section id="team" class="workspace-insights" aria-label="ოპერაციების მოკლე ანალიზი">
-          <article class="insight-card">
-            <div class="section-title-row">
-              <div>
-                <span class="workspace-kicker">გუნდის დატვირთვა</span>
-                <h2>ვისთან რა მოცულობაა</h2>
-              </div>
-            </div>
-            <div id="workloadList" class="workload-list" aria-live="polite"></div>
-          </article>
-          <article class="insight-card insight-card--schedule">
-            <div class="section-title-row">
-              <div>
-                <span class="workspace-kicker">ახლო ვადები</span>
-                <h2>რა მოითხოვს ყურადღებას</h2>
-              </div>
-            </div>
-            <div id="upcomingList" class="upcoming-list" aria-live="polite"></div>
-          </article>
-        </section>
-
-        <section id="board" class="board-section" aria-labelledby="board-heading">
-          <div class="board-section__header">
+        <section id="view-overview" class="view-section" data-view="overview" hidden>
+          <div class="workspace-hero">
             <div>
-              <span class="workspace-kicker">სამუშაო ნაკადი</span>
-              <h2 id="board-heading">დავალებების დაფა</h2>
+              <span class="workspace-kicker">მიმოხილვა</span>
+              <h1>დღის სამუშაოები <span>კონტროლქვეშაა.</span></h1>
+              <p>შეაფასე გუნდის დატვირთვა, გაანაწილე პრიორიტეტები და მიჰყევი ყველა დავალებას მიღებიდან დასრულებამდე.</p>
             </div>
-            <button type="button" class="btn btn--ghost btn--compact" id="exportButton">Excel ექსპორტი</button>
+            <button type="button" class="btn btn--primary workspace-hero__cta" id="createTaskButton">
+              <span aria-hidden="true">+</span> ახალი დავალება
+            </button>
           </div>
 
-          <div class="board-toolbar" aria-label="დავალებების ფილტრები">
-            <label class="search-field">
-              <span aria-hidden="true">⌕</span>
-              <input id="taskSearch" type="search" placeholder="მოძებნე სათაურით, ლოკაციით…">
-            </label>
-            <select class="input board-toolbar__select" id="priorityFilter" aria-label="პრიორიტეტის ფილტრი">
-              <option value="">ყველა პრიორიტეტი</option>
-              <option value="urgent">კრიტიკული</option>
-              <option value="high">მაღალი</option>
-              <option value="medium">საშუალო</option>
-              <option value="low">დაბალი</option>
-            </select>
-            <select class="input board-toolbar__select" id="technicianFilter" aria-label="ტექნიკოსის ფილტრი">
-              <option value="">ყველა ტექნიკოსი</option>
-            </select>
+          <div class="metrics-grid" aria-label="მიმოხილვის მაჩვენებლები">
+            <article class="metric-card metric-card--yellow">
+              <span class="metric-card__label">აქტიური დავალებები</span>
+              <strong id="metricActive">—</strong>
+              <span class="metric-card__note">გადასანაწილებელი და მიმდინარე</span>
+            </article>
+            <article class="metric-card">
+              <span class="metric-card__label">მიმდინარეობს</span>
+              <strong id="metricProgress">—</strong>
+              <span class="metric-card__note">ტექნიკოსებთან სამუშაოზე</span>
+            </article>
+            <article class="metric-card metric-card--alert">
+              <span class="metric-card__label">დაბლოკილია</span>
+              <strong id="metricBlocked">—</strong>
+              <span class="metric-card__note">მოითხოვს ყურადღებას</span>
+            </article>
+            <article class="metric-card">
+              <span class="metric-card__label">ვადაგადაცილებული</span>
+              <strong id="metricOverdue">—</strong>
+              <span class="metric-card__note">ვადა უკვე გასულია</span>
+            </article>
           </div>
 
-          <div id="taskBoard" class="kanban-board" aria-live="polite"></div>
+          <div class="workspace-insights" aria-label="ოპერაციების მოკლე ანალიზი">
+            <article class="insight-card">
+              <div class="section-title-row">
+                <div>
+                  <span class="workspace-kicker">გუნდის დატვირთვა</span>
+                  <h2>ვისთან რა მოცულობაა</h2>
+                </div>
+              </div>
+              <div id="workloadList" class="workload-list" aria-live="polite"></div>
+            </article>
+            <article class="insight-card insight-card--schedule">
+              <div class="section-title-row">
+                <div>
+                  <span class="workspace-kicker">ახლო ვადები</span>
+                  <h2>რა მოითხოვს ყურადღებას</h2>
+                </div>
+              </div>
+              <div id="upcomingList" class="upcoming-list" aria-live="polite"></div>
+            </article>
+          </div>
         </section>
+
+        <section id="view-board" class="view-section" data-view="board" hidden>
+          <div class="board-section" aria-labelledby="board-heading">
+            <div class="board-section__header">
+              <div>
+                <span class="workspace-kicker">სამუშაო ნაკადი</span>
+                <h2 id="board-heading">დავალებების დაფა</h2>
+              </div>
+              <div class="board-section__actions">
+                <button type="button" class="btn btn--primary" id="createTaskButtonBoard">
+                  <span aria-hidden="true">+</span> ახალი დავალება
+                </button>
+                <button type="button" class="btn btn--ghost btn--compact" id="exportButton">Excel ექსპორტი</button>
+              </div>
+            </div>
+
+            <div class="board-toolbar" aria-label="დავალებების ფილტრები">
+              <label class="search-field">
+                <span aria-hidden="true">⌕</span>
+                <input id="taskSearch" type="search" placeholder="მოძებნე სათაურით, ლოკაციით…">
+              </label>
+              <select class="input board-toolbar__select" id="priorityFilter" aria-label="პრიორიტეტის ფილტრი">
+                <option value="">ყველა პრიორიტეტი</option>
+                <option value="urgent">კრიტიკული</option>
+                <option value="high">მაღალი</option>
+                <option value="medium">საშუალო</option>
+                <option value="low">დაბალი</option>
+              </select>
+              <select class="input board-toolbar__select" id="technicianFilter" aria-label="ტექნიკოსის ფილტრი">
+                <option value="">ყველა ტექნიკოსი</option>
+              </select>
+            </div>
+
+            <div id="taskBoard" class="kanban-board" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <section id="view-departments" class="view-section" data-view="departments" hidden>
+          <div class="view-head">
+            <div>
+              <span class="workspace-kicker">ორგანიზაცია</span>
+              <h1>დეპარტამენტები</h1>
+              <p>მართე ორგანიზაციის სტრუქტურული ერთეულები.</p>
+            </div>
+            <button type="button" class="btn btn--primary" id="createDepartmentButton">
+              <span aria-hidden="true">+</span> ახალი დეპარტამენტი
+            </button>
+          </div>
+          <div id="departmentsContent" class="panel-content" aria-live="polite"></div>
+        </section>
+
+        <section id="view-positions" class="view-section" data-view="positions" hidden>
+          <div class="view-head">
+            <div>
+              <span class="workspace-kicker">ორგანიზაცია</span>
+              <h1>პოზიციები</h1>
+              <p>პოზიციები დეპარტამენტების მიხედვით.</p>
+            </div>
+            <button type="button" class="btn btn--primary" id="createPositionButton">
+              <span aria-hidden="true">+</span> ახალი პოზიცია
+            </button>
+          </div>
+          <div class="view-toolbar">
+            <select class="input view-toolbar__select" id="positionDepartmentFilter" aria-label="დეპარტამენტის ფილტრი">
+              <option value="">ყველა დეპარტამენტი</option>
+            </select>
+          </div>
+          <div id="positionsContent" class="panel-content" aria-live="polite"></div>
+        </section>
+
+        <section id="view-employees" class="view-section" data-view="employees" hidden>
+          <div class="view-head">
+            <div>
+              <span class="workspace-kicker">ორგანიზაცია</span>
+              <h1>თანამშრომლები</h1>
+              <p>ორგანიზაციული ინფორმაცია და დავალებები.</p>
+            </div>
+          </div>
+          <div id="employeesContent" class="panel-content" aria-live="polite"></div>
+        </section>
+
+        <section id="view-reports" class="view-section" data-view="reports" hidden>
+          <div class="view-head">
+            <div>
+              <span class="workspace-kicker">ანგარიშები</span>
+              <h1>ანგარიშები</h1>
+              <p>მიმოხილვა და მონაცემების ექსპორტი.</p>
+            </div>
+            <button type="button" class="btn btn--primary" id="reportsExportButton">Excel ექსპორტი</button>
+          </div>
+          <div id="reportsContent" class="panel-content" aria-live="polite"></div>
+        </section>
+
+        <section id="view-profile" class="view-section" data-view="profile" hidden>
+          <div class="view-head">
+            <div>
+              <span class="workspace-kicker">სისტემა</span>
+              <h1>პროფილი</h1>
+            </div>
+          </div>
+          <div id="profileContent" class="panel-content" aria-live="polite"></div>
+        </section>
+
       </main>
     </div>
   </div>
 
-  <dialog class="task-dialog" id="taskDialog" aria-labelledby="taskDialogTitle">
-    <form id="taskForm" class="task-dialog__form">
-      <div class="task-dialog__header">
+  <dialog class="modal" id="taskDialog" aria-labelledby="taskDialogTitle">
+    <form id="taskForm" class="modal__form">
+      <div class="modal__header">
         <div>
           <span class="workspace-kicker" id="taskDialogKicker">ახალი სამუშაო</span>
           <h2 id="taskDialogTitle">დავალების შექმნა</h2>
         </div>
-        <button type="button" class="dialog-close" id="closeDialogButton" aria-label="დახურვა">×</button>
+        <button type="button" class="dialog-close" data-close-dialog="taskDialog" aria-label="დახურვა">×</button>
       </div>
 
-      <div class="task-dialog__grid">
+      <div class="modal__grid">
         <div class="form-section">
-          <h3 class="form-section__title">ისტურალი</h3>
+          <h3 class="form-section__title">ინფორმაცია</h3>
           <div class="form-section__fields">
             <label class="form-group">
               <span>სათაური *</span>
@@ -195,7 +275,7 @@
         </div>
 
         <div class="form-section">
-          <h3 class="form-section__title">დანისათისა</h3>
+          <h3 class="form-section__title">დანიშვნა</h3>
           <div class="form-section__fields">
             <label class="form-group">
               <span>ტექნიკოსი *</span>
@@ -205,12 +285,6 @@
               <span>საბოლოო ვადა</span>
               <input class="input" id="taskDueDate" name="due_date" type="date">
             </label>
-          </div>
-        </div>
-
-        <div class="form-section">
-          <h3 class="form-section__title">მდგომარეობა და საკონტაქტო</h3>
-          <div class="form-section__fields">
             <label class="form-group">
               <span>ლოკაცია / მისამართი</span>
               <input class="input" id="taskLocation" name="location" placeholder="ობიექტის მისამართი">
@@ -222,56 +296,79 @@
           </div>
         </div>
 
-        <div class="form-section">
+        <div class="form-section modal__wide">
           <h3 class="form-section__title">აღწერა</h3>
           <div class="form-section__fields">
-            <label class="form-group task-dialog__textarea-group">
-              <textarea class="input task-dialog__textarea" id="taskDescription" name="description" placeholder="რა უნდა გაკეთდეს? მიუთითე აპარატის ნომერი და ასეთი დეტალები."></textarea>
+            <label class="form-group">
+              <textarea class="input modal__textarea" id="taskDescription" name="description" placeholder="რა უნდა გაკეთდეს? მიუთითე აპარატის ნომერი და ასეთი დეტალები."></textarea>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-section modal__wide">
+          <h3 class="form-section__title">სურათი (სურვილისამებრ)</h3>
+          <div class="form-section__fields">
+            <label class="form-group">
+              <input class="input" id="taskImage" name="image" type="file" accept="image/jpeg,image/png,image/webp">
             </label>
           </div>
         </div>
       </div>
 
-      <div class="task-dialog__footer">
-        <button type="button" class="btn btn--ghost" id="cancelDialogButton">გაუქმება</button>
+      <div class="modal__footer">
+        <button type="button" class="btn btn--ghost" data-close-dialog="taskDialog">გაუქმება</button>
         <button type="submit" class="btn btn--primary" id="saveTaskButton">დავალების შენახვა</button>
       </div>
     </form>
   </dialog>
 
+  <dialog class="modal" id="entityDialog" aria-labelledby="entityTitle">
+    <form id="entityForm" class="modal__form">
+      <div class="modal__header">
+        <div>
+          <span class="workspace-kicker" id="entityKicker">მართვა</span>
+          <h2 id="entityTitle">ფორმა</h2>
+        </div>
+        <button type="button" class="dialog-close" data-close-dialog="entityDialog" aria-label="დახურვა">×</button>
+      </div>
+      <div id="entityBody" class="modal__body"></div>
+      <div class="modal__footer">
+        <button type="button" class="btn btn--ghost" data-close-dialog="entityDialog">გაუქმება</button>
+        <button type="submit" class="btn btn--primary" id="entitySaveButton">შენახვა</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="modal modal--confirm" id="confirmDialog" aria-labelledby="confirmTitle">
+    <div class="modal__form">
+      <div class="modal__header">
+        <div>
+          <span class="workspace-kicker">დადასტურება</span>
+          <h2 id="confirmTitle" data-confirm-title>დადასტურება</h2>
+        </div>
+      </div>
+      <div class="modal__body">
+        <p data-confirm-message>დარწმუნებული ხართ?</p>
+      </div>
+      <div class="modal__footer">
+        <button type="button" class="btn btn--ghost" data-confirm-cancel>გაუქმება</button>
+        <button type="button" class="btn btn--danger" data-confirm-ok>წაშლა</button>
+      </div>
+    </div>
+  </dialog>
+
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script src="admin.js"></script>
-  <script>
-    // Theme toggle
-    const themeToggle = document.getElementById('themeToggle');
-    if (themeToggle) {
-      const savedTheme = localStorage.getItem('theme');
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      
-      // Set initial theme
-      if (savedTheme) {
-        document.body.dataset.theme = savedTheme;
-      } else if (prefersDark) {
-        document.body.dataset.theme = 'dark';
-      }
-      
-      // Update icon display
-      function updateIcon() {
-        const isDark = document.body.dataset.theme === 'dark';
-        themeToggle.querySelector('span:first-child').style.display = isDark ? 'none' : 'inline';
-        themeToggle.querySelector('span:last-child').style.display = isDark ? 'inline' : 'none';
-      }
-      updateIcon();
-      
-      // Toggle theme
-      themeToggle.addEventListener('click', () => {
-        const currentTheme = document.body.dataset.theme;
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        document.body.dataset.theme = newTheme;
-        localStorage.setItem('theme', newTheme);
-        updateIcon();
-      });
-    }
-  </script>
+
+  <script src="js/constants.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/views/overview.js"></script>
+  <script src="js/views/board.js"></script>
+  <script src="js/views/departments.js"></script>
+  <script src="js/views/positions.js"></script>
+  <script src="js/views/employees.js"></script>
+  <script src="js/views/reports.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
