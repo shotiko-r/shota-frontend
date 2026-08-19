@@ -860,6 +860,7 @@ body.operations-page[data-theme="dark"] {
 
 .workspace-sidebar__label {
   padding: 0 0.75rem;
+  margin-bottom: 0.25rem;
   font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -878,6 +879,7 @@ body.operations-page[data-theme="dark"] {
   align-items: center;
   gap: 0.7rem;
   width: 100%;
+  margin: 0;
   padding: 0.7rem 0.75rem;
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
@@ -886,13 +888,27 @@ body.operations-page[data-theme="dark"] {
   font: 600 0.92rem/1.2 var(--font-sans);
   text-align: left;
   cursor: pointer;
-  transition: background var(--transition), border-color var(--transition);
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background var(--transition), border-color var(--transition),
+    box-shadow var(--transition);
 }
 
-.workspace-nav__item:hover,
-.workspace-nav__item.is-active {
+.workspace-nav__item:hover {
   background: var(--surface-hover);
   border-color: var(--border);
+}
+
+.workspace-nav__item.is-active {
+  background: var(--surface);
+  border-color: var(--border);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.workspace-nav__item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .workspace-nav__item span {
