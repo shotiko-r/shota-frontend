@@ -14,7 +14,7 @@
 <body class="operations-page">
   <div class="watermark" aria-hidden="true">
     <span class="watermark__line">Unitasks</span>
-    <span class="watermark__line watermark__line--secondary">სამუშაო სივრცე</span>
+    <span class="watermark__line watermark__line--secondary">ოპერაციების მართვა</span>
     <span class="watermark__accent"></span>
   </div>
 
@@ -33,6 +33,10 @@
 
       <div class="workspace-header__actions">
         <span class="workspace-header__date" id="todayLabel"></span>
+        <button type="button" class="workspace-notify" id="notifyBell" title="შეტყობინებები" aria-label="შეტყობინებები">
+          <span aria-hidden="true">🔔</span>
+          <span class="workspace-notify__badge" id="notifyBadge" hidden>0</span>
+        </button>
         <button type="button" class="workspace-user" id="userChip" title="პროფილი">
           <span class="workspace-user__avatar" id="userAvatar" aria-hidden="true">?</span>
           <span class="workspace-user__copy">
@@ -57,74 +61,70 @@
 
         <div class="workspace-sidebar__help">
           <span class="workspace-sidebar__help-icon" aria-hidden="true">?</span>
-          <p><strong>გჭირდება სწრაფი რეაგირება?</strong> მონიშნე დავალება, რომელიც გუნდის ყურადღებას მოითხოვს.</p>
+          <p><strong>გჭირდება სწრაფი რეაგირება?</strong> აკონტროლე სამუშაო ბრძანებები, განრიგი და მარაგები ერთი ეკრანიდან.</p>
         </div>
       </aside>
 
       <main class="workspace-main">
 
-        <section id="view-overview" class="view-section" data-view="overview" hidden>
+        <!-- Оპერატიული მიმოხილვა -->
+        <section id="view-dashboard" class="view-section" data-view="dashboard" hidden>
           <div class="workspace-hero">
             <div>
-              <span class="workspace-kicker">მიმოხილვა</span>
-              <h1>დღის სამუშაოები <span>კონტროლქვეშაა.</span></h1>
-              <p>შეაფასე გუნდის დატვირთვა, გაანაწილე პრიორიტეტები და მიჰყევი ყველა დავალებას მიღებიდან დასრულებამდე.</p>
+              <span class="workspace-kicker">ოპერატიული მიმოხილვა</span>
+              <h1>მდგომარეობა <span>კონტროლქვეშაა.</span></h1>
+              <p>სამუშაო ბრძანებები, განრიგი, SLA და მარაგები — ერთ სურათში.</p>
             </div>
-            <button type="button" class="btn btn--primary workspace-hero__cta" id="createTaskButton">
-              <span aria-hidden="true">+</span> ახალი დავალება
-            </button>
+            <div class="workspace-hero__actions">
+              <button type="button" class="btn btn--primary" id="dashboardCreateWorkOrder" hidden>
+                <span aria-hidden="true">+</span> ახალი სამუშაო ბრძანება
+              </button>
+            </div>
           </div>
-
-          <div class="metrics-grid" aria-label="მიმოხილვის მაჩვენებლები">
-            <article class="metric-card metric-card--yellow">
-              <span class="metric-card__label">აქტიური დავალებები</span>
-              <strong id="metricActive">—</strong>
-              <span class="metric-card__note">გადასანაწილებელი და მიმდინარე</span>
-            </article>
-            <article class="metric-card">
-              <span class="metric-card__label">მიმდინარეობს</span>
-              <strong id="metricProgress">—</strong>
-              <span class="metric-card__note">ტექნიკოსებთან სამუშაოზე</span>
-            </article>
-            <article class="metric-card metric-card--alert">
-              <span class="metric-card__label">დაბლოკილია</span>
-              <strong id="metricBlocked">—</strong>
-              <span class="metric-card__note">მოითხოვს ყურადღებას</span>
-            </article>
-            <article class="metric-card">
-              <span class="metric-card__label">ვადაგადაცილებული</span>
-              <strong id="metricOverdue">—</strong>
-              <span class="metric-card__note">ვადა უკვე გასულია</span>
-            </article>
-          </div>
-
-          <div class="workspace-insights" aria-label="ოპერაციების მოკლე ანალიზი">
-            <article class="insight-card">
-              <div class="section-title-row">
-                <div>
-                  <span class="workspace-kicker">გუნდის დატვირთვა</span>
-                  <h2>ვისთან რა მოცულობაა</h2>
-                </div>
-              </div>
-              <div id="workloadList" class="workload-list" aria-live="polite"></div>
-            </article>
-            <article class="insight-card insight-card--schedule">
-              <div class="section-title-row">
-                <div>
-                  <span class="workspace-kicker">ახლო ვადები</span>
-                  <h2>რა მოითხოვს ყურადღებას</h2>
-                </div>
-              </div>
-              <div id="upcomingList" class="upcoming-list" aria-live="polite"></div>
-            </article>
-          </div>
+          <div id="dashboardContent" class="panel-content" aria-live="polite"></div>
         </section>
 
+        <!-- სამუშაო ბრძანებები -->
+        <section id="view-work-orders" class="view-section" data-view="workOrders" hidden>
+          <div class="view-head">
+            <div>
+              <span class="workspace-kicker">ოპერაციები</span>
+              <h1>სამუშაო ბრძანებები</h1>
+              <p>შექმნა, დანიშვნა, შესრულება, SLA და დასრულება.</p>
+            </div>
+            <div class="view-head__actions">
+              <button type="button" class="btn btn--ghost btn--compact" id="workOrdersExportButton" hidden>Excel ექსპორტი</button>
+              <button type="button" class="btn btn--primary" id="createWorkOrderButton" hidden>
+                <span aria-hidden="true">+</span> ახალი სამუშაო ბრძანება
+              </button>
+            </div>
+          </div>
+          <div id="workOrdersContent" class="panel-content" aria-live="polite"></div>
+        </section>
+
+        <!-- დისპეჩინგი / განრიგი -->
+        <section id="view-dispatch" class="view-section" data-view="dispatch" hidden>
+          <div class="view-head">
+            <div>
+              <span class="workspace-kicker">ოპერაციები</span>
+              <h1>დისპეჩინგი / განრიგი</h1>
+              <p>ვიზიტები, ხელმისაწვდომობა და ტექნიკოსების განრიგი.</p>
+            </div>
+            <div class="view-head__actions">
+              <button type="button" class="btn btn--primary" id="createAppointmentButton" hidden>
+                <span aria-hidden="true">+</span> ახალი ვიზიტი
+              </button>
+            </div>
+          </div>
+          <div id="dispatchContent" class="panel-content" aria-live="polite"></div>
+        </section>
+
+        <!-- დავალებების დაფა (Phase 5, preserved) -->
         <section id="view-board" class="view-section" data-view="board" hidden>
           <div class="board-section" aria-labelledby="board-heading">
             <div class="board-section__header">
               <div>
-                <span class="workspace-kicker">სამუშაო ნაკადი</span>
+                <span class="workspace-kicker">ოპერაციები</span>
                 <h2 id="board-heading">დავალებების დაფა</h2>
               </div>
               <div class="board-section__actions">
@@ -156,6 +156,163 @@
           </div>
         </section>
 
+        <!-- ნაწილები -->
+        <section id="view-parts" class="view-section" data-view="parts" hidden>
+          <div class="view-head">
+            <div>
+              <span class="workspace-kicker">მარაგები</span>
+              <h1>ნაწილები</h1>
+              <p>ნაწილებისა და მასალების საერთო კატალოგი (SKU-უნიკალური).</p>
+            </div>
+            <div class="view-head__actions">
+              <button type="button" class="btn btn--primary" id="createPartButton" hidden>
+                <span aria-hidden="true">+</span> ახალი ნაწილი
+              </button>
+            </div>
+          </div>
+          <div id="partsContent" class="panel-content" aria-live="polite"></div>
+        </section>
+
+        <!-- საწყობები -->
+        <section id="view-warehouses" class="view-section" data-view="warehouses" hidden>
+          <div class="view-head">
+            <div>
+              <span class="workspace-kicker">მარაგები</span>
+              <h1>საწყობები</h1>
+              <p>ფიზიკური და ლოგიკური მარაგების ადგილმდებარეობები.</p>
+            </div>
+            <div class="view-head__actions">
+              <button type="button" class="btn btn--primary" id="createWarehouseButton" hidden>
+                <span aria-hidden="true">+</span> ახალი საწყობი
+              </button>
+            </div>
+          </div>
+          <div id="warehousesContent" class="panel-content" aria-live="polite"></div>
+        </section>
+
+        <!-- მარაგების ბალანსი -->
+        <section id="view-stock" class="view-section" data-view="stock" hidden>
+          <div class="view-head">
+            <div>
+              <span class="workspace-kicker">მარაგები</span>
+              <h1>მარაგების ბალანსი</h1>
+              <p>ბალანსები, მოძრაობები და დაბალი მარაგის სიგნალები.</p>
+            </div>
+            <div class="view-head__actions">
+              <button type="button" class="btn btn--primary" id="stockActionButton" hidden>
+                <span aria-hidden="true">+</span> მარაგის ოპერაცია
+              </button>
+            </div>
+          </div>
+          <div id="stockContent" class="panel-content" aria-live="polite"></div>
+        </section>
+
+        <!-- რეზერვაციები -->
+        <section id="view-reservations" class="view-section" data-view="reservations" hidden>
+          <div class="view-head">
+            <div>
+              <span class="workspace-kicker">მარაგები</span>
+              <h1>რეზერვაციები</h1>
+              <p>სამუშაო ბრძანებებისთვის დაჯავშნული მარაგები.</p>
+            </div>
+          </div>
+          <div id="reservationsContent" class="panel-content" aria-live="polite"></div>
+        </section>
+
+        <!-- ტექნიკოსის მარაგი -->
+        <section id="view-technician-stock" class="view-section" data-view="technicianStock" hidden>
+          <div class="view-head">
+            <div>
+              <span class="workspace-kicker">მარაგები</span>
+              <h1>ტექნიკოსის მარაგი</h1>
+              <p>საველე მარაგი ტექნიკოსების ხელში.</p>
+            </div>
+          </div>
+          <div id="technicianStockContent" class="panel-content" aria-live="polite"></div>
+        </section>
+
+        <!-- შესყიდვის მოთხოვნები -->
+        <section id="view-purchase-requests" class="view-section" data-view="purchaseRequests" hidden>
+          <div class="view-head">
+            <div>
+              <span class="workspace-kicker">შესყიდვები</span>
+              <h1>შესყიდვის მოთხოვნები</h1>
+              <p>მოთხოვნა, დამტკიცება, შეკვეთა და მიღება.</p>
+            </div>
+            <div class="view-head__actions">
+              <button type="button" class="btn btn--primary" id="createPurchaseRequestButton" hidden>
+                <span aria-hidden="true">+</span> ახალი მოთხოვნა
+              </button>
+            </div>
+          </div>
+          <div id="purchaseRequestsContent" class="panel-content" aria-live="polite"></div>
+        </section>
+
+        <!-- მომწოდებლები -->
+        <section id="view-suppliers" class="view-section" data-view="suppliers" hidden>
+          <div class="view-head">
+            <div>
+              <span class="workspace-kicker">შესყიდვები</span>
+              <h1>მომწოდებლები</h1>
+              <p>მომწოდებელთა კატალოგი.</p>
+            </div>
+            <div class="view-head__actions">
+              <button type="button" class="btn btn--primary" id="createSupplierButton" hidden>
+                <span aria-hidden="true">+</span> ახალი მომწოდებელი
+              </button>
+            </div>
+          </div>
+          <div id="suppliersContent" class="panel-content" aria-live="polite"></div>
+        </section>
+
+        <!-- შესყიდვის ორდერები -->
+        <section id="view-purchase-orders" class="view-section" data-view="purchaseOrders" hidden>
+          <div class="view-head">
+            <div>
+              <span class="workspace-kicker">შესყიდვები</span>
+              <h1>შესყიდვის ორდერები</h1>
+              <p>ორდერების მართვა და მიღება მომწოდებლებთან.</p>
+            </div>
+            <div class="view-head__actions">
+              <button type="button" class="btn btn--primary" id="createPurchaseOrderButton" hidden>
+                <span aria-hidden="true">+</span> ახალი ორდერი
+              </button>
+            </div>
+          </div>
+          <div id="purchaseOrdersContent" class="panel-content" aria-live="polite"></div>
+        </section>
+
+        <!-- ანგარიშები -->
+        <section id="view-reports" class="view-section" data-view="reports" hidden>
+          <div class="view-head">
+            <div>
+              <span class="workspace-kicker">ანგარიშები</span>
+              <h1>ანგარიშები</h1>
+              <p>მიმოხილვა და მონაცემების ექსპორტი.</p>
+            </div>
+            <button type="button" class="btn btn--primary" id="reportsExportButton">Excel ექსპორტი</button>
+          </div>
+          <div id="reportsContent" class="panel-content" aria-live="polite"></div>
+        </section>
+
+        <!-- თანამშრომლები -->
+        <section id="view-employees" class="view-section" data-view="employees" hidden>
+          <div class="view-head">
+            <div>
+              <span class="workspace-kicker">ორგანიზაცია</span>
+              <h1>თანამშრომლები</h1>
+              <p>ორგანიზაციული ინფორმაცია და დავალებები.</p>
+            </div>
+            <div class="view-head__actions">
+              <button type="button" class="btn btn--primary" id="createEmployeeButton" hidden>
+                <span aria-hidden="true">+</span> ახალი თანამშრომელი
+              </button>
+            </div>
+          </div>
+          <div id="employeesContent" class="panel-content" aria-live="polite"></div>
+        </section>
+
+        <!-- დეპარტამენტები -->
         <section id="view-departments" class="view-section" data-view="departments" hidden>
           <div class="view-head">
             <div>
@@ -170,6 +327,7 @@
           <div id="departmentsContent" class="panel-content" aria-live="polite"></div>
         </section>
 
+        <!-- პოზიციები -->
         <section id="view-positions" class="view-section" data-view="positions" hidden>
           <div class="view-head">
             <div>
@@ -189,29 +347,32 @@
           <div id="positionsContent" class="panel-content" aria-live="polite"></div>
         </section>
 
-        <section id="view-employees" class="view-section" data-view="employees" hidden>
+        <!-- შეტყობინებები -->
+        <section id="view-notifications" class="view-section" data-view="notifications" hidden>
           <div class="view-head">
             <div>
-              <span class="workspace-kicker">ორგანიზაცია</span>
-              <h1>თანამშრომლები</h1>
-              <p>ორგანიზაციული ინფორმაცია და დავალებები.</p>
+              <span class="workspace-kicker">სისტემა</span>
+              <h1>შეტყობინებები</h1>
+              <p>მხოლოდ თქვენი შეტყობინებები — სხვა მომხმარებლის ვერ ხედავთ.</p>
             </div>
+            <button type="button" class="btn btn--ghost btn--compact" id="markAllReadButton">ყველას წაკითხულად მონიშვნა</button>
           </div>
-          <div id="employeesContent" class="panel-content" aria-live="polite"></div>
+          <div id="notificationsContent" class="panel-content" aria-live="polite"></div>
         </section>
 
-        <section id="view-reports" class="view-section" data-view="reports" hidden>
+        <!-- აუდიტის ჟურნალი -->
+        <section id="view-audit" class="view-section" data-view="audit" hidden>
           <div class="view-head">
             <div>
-              <span class="workspace-kicker">ანგარიშები</span>
-              <h1>ანგარიშები</h1>
-              <p>მიმოხილვა და მონაცემების ექსპორტი.</p>
+              <span class="workspace-kicker">სისტემა</span>
+              <h1>აუდიტის ჟურნალი</h1>
+              <p>წარსული მოქმედებების უცვლელი ისტორია.</p>
             </div>
-            <button type="button" class="btn btn--primary" id="reportsExportButton">Excel ექსპორტი</button>
           </div>
-          <div id="reportsContent" class="panel-content" aria-live="polite"></div>
+          <div id="auditContent" class="panel-content" aria-live="polite"></div>
         </section>
 
+        <!-- პროფილი -->
         <section id="view-profile" class="view-section" data-view="profile" hidden>
           <div class="view-head">
             <div>
@@ -369,6 +530,19 @@
   <script src="js/views/positions.js"></script>
   <script src="js/views/employees.js"></script>
   <script src="js/views/reports.js"></script>
+  <script src="js/views/dashboard.js"></script>
+  <script src="js/views/workOrders.js"></script>
+  <script src="js/views/dispatch.js"></script>
+  <script src="js/views/parts.js"></script>
+  <script src="js/views/warehouses.js"></script>
+  <script src="js/views/stock.js"></script>
+  <script src="js/views/reservations.js"></script>
+  <script src="js/views/technicianStock.js"></script>
+  <script src="js/views/purchaseRequests.js"></script>
+  <script src="js/views/suppliers.js"></script>
+  <script src="js/views/purchaseOrders.js"></script>
+  <script src="js/views/notifications.js"></script>
+  <script src="js/views/audit.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

@@ -1,11 +1,13 @@
-// app.js — single workspace shell controller.
-// Renders role-based navigation, handles hash routing between views, wires the
-// header (user, theme, logout), mobile sidebar and global dialog close buttons.
+// app.js — single workspace shell controller (Phase 11).
+// Renders role-based navigation, handles hash routing between business-area
+// views, wires the header (user, notifications, theme, logout), mobile sidebar
+// and global dialog close buttons.
 
 const Workspace = {
   user: null,
   role: "employee",
   currentView: null,
+  _notifyTimer: null,
 
   init() {
     if (!requireAuth()) return;
@@ -20,6 +22,7 @@ const Workspace = {
     this.setupDialogs();
     this.setupRouting();
     this.setInitialView();
+    this.startNotificationPolling();
   },
 
   setupHeader() {
@@ -36,13 +39,16 @@ const Workspace = {
     const userRole = document.getElementById("userRole");
     const userAvatar = document.getElementById("userAvatar");
     if (userName) userName.textContent = this.user.username || "—";
-    if (userRole) userRole.textContent = LEGACY_ROLE_LABELS[this.role] || this.role;
+    if (userRole) userRole.textContent = roleLabel(this.role);
     if (userAvatar) {
       userAvatar.textContent = (this.user.username || "?").slice(0, 1).toUpperCase();
     }
 
     const chip = document.getElementById("userChip");
     if (chip) chip.addEventListener("click", () => this.navigate("profile"));
+
+    const bell = document.getElementById("notifyBell");
+    if (bell) bell.addEventListener("click", () => this.navigate("notifications"));
 
     const logoutButton = document.getElementById("logoutButton");
     if (logoutButton) logoutButton.addEventListener("click", logout);
@@ -197,8 +203,14 @@ const Workspace = {
   initView(view) {
     const role = this.role;
     switch (view) {
-      case "overview":
-        OverviewView.init();
+      case "dashboard":
+        DashboardView.init({ role, canCreate: capability(role, "workOrders") });
+        break;
+      case "workOrders":
+        WorkOrdersView.init({ role });
+        break;
+      case "dispatch":
+        DispatchView.init({ role });
         break;
       case "board":
         BoardView.init({
@@ -206,17 +218,47 @@ const Workspace = {
           canManage: capability(role, "employees")
         });
         break;
+      case "parts":
+        PartsView.init({ role });
+        break;
+      case "warehouses":
+        WarehousesView.init({ role });
+        break;
+      case "stock":
+        StockView.init({ role });
+        break;
+      case "reservations":
+        ReservationsView.init({ role });
+        break;
+      case "technicianStock":
+        TechnicianStockView.init({ role });
+        break;
+      case "purchaseRequests":
+        PurchaseRequestsView.init({ role });
+        break;
+      case "suppliers":
+        SuppliersView.init({ role });
+        break;
+      case "purchaseOrders":
+        PurchaseOrdersView.init({ role });
+        break;
+      case "notifications":
+        NotificationsView.init({ role });
+        break;
+      case "audit":
+        AuditView.init({ role });
+        break;
+      case "reports":
+        ReportsView.init();
+        break;
+      case "employees":
+        EmployeesView.init({ role });
+        break;
       case "departments":
         DepartmentsView.init();
         break;
       case "positions":
         PositionsView.init();
-        break;
-      case "employees":
-        EmployeesView.init();
-        break;
-      case "reports":
-        ReportsView.init();
         break;
       case "profile":
         this.renderProfile();
@@ -226,18 +268,66 @@ const Workspace = {
     }
   },
 
-  renderProfile() {
+  // -------------------------------------------------------------------------
+  // Notifications bell (recipient-scoped, read-only count).
+  // -------------------------------------------------------------------------
+  startNotificationPolling() {
+    if (!capability(this.role, "notifications")) return;
+    this.refreshUnreadCount();
+    this._notifyTimer = window.setInterval(() => this.refreshUnreadCount(), 60000);
+  },
+
+  async refreshUnreadCount() {
+    try {
+      const result = await apiGet("/notifications/unread-count");
+      const count = Number(result && result.unread_count) || 0;
+      const badge = document.getElementById("notifyBadge");
+      if (!badge) return;
+      badge.textContent = count > 99 ? "99+" : String(count);
+      badge.hidden = count === 0;
+    } catch (error) {
+      // Silent — the bell is a convenience, not a critical path.
+    }
+  },
+
+  // -------------------------------------------------------------------------
+  // Profile (self-service, read-only; no write endpoints exist for self).
+  // -------------------------------------------------------------------------
+  async renderProfile() {
     const target = document.getElementById("profileContent");
     if (!target) return;
     const user = this.user;
+    setLoading(target);
+
+    let detail = null;
+    try {
+      detail = await apiGet(`/users/${user.id}`);
+    } catch (error) {
+      // Fall back to token data if the detail call is not allowed.
+    }
+
+    const roleLabelText = roleLabel(this.role);
+    const name = detail
+      ? [detail.first_name, detail.last_name].filter(Boolean).join(" ") || detail.username
+      : user.username;
+
     target.innerHTML = `
       <div class="panel profile-panel">
         <div class="profile-panel__avatar" aria-hidden="true">${esc((user.username || "?").slice(0, 1).toUpperCase())}</div>
         <div class="profile-panel__info">
           <span class="workspace-kicker">ანგარიში</span>
-          <h2>${esc(user.username || "—")}</h2>
-          <p><strong>როლი:</strong> ${esc(LEGACY_ROLE_LABELS[this.role] || this.role)}</p>
-          <p class="profile-panel__note">პაროლისა და პირადი მონაცემების მართვა ამ ეტაპზე მიუწვდომელია.</p>
+          <h2>${esc(name)}</h2>
+          <p><strong>მომხმარებელი:</strong> ${esc(user.username || "—")}</p>
+          <p><strong>როლი:</strong> ${esc(roleLabelText)}</p>
+          ${
+            detail
+              ? `<p><strong>ელ. ფოსტა:</strong> ${esc(detail.email || "—")}</p>
+                 <p><strong>ტელეფონი:</strong> ${esc(detail.phone || "—")}</p>
+                 <p><strong>დეპარტამენტი:</strong> ${esc(detail.department ? detail.department.name : "—")}</p>
+                 <p><strong>პოზიცია:</strong> ${esc(detail.position ? detail.position.name : "—")}</p>`
+              : ""
+          }
+          <p class="profile-panel__note">პაროლისა და პირადი მონაცემების შეცვლა ამ ეტაპზე მიუწვდომელია.</p>
         </div>
       </div>
     `;
